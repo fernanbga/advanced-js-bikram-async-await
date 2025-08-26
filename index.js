@@ -1,17 +1,6 @@
 //DESARROLLA AQUI TUS SOLUCIONES
 
 
-//2
-async function getImageAndName (pokemon){
-
-    let response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon}`)
-    let data = await response.json();
-    let name = data.name;
-    let img = data.sprites.front_default;
-    return {name, img}
-    
-}
-
 //1 Declara una función **getRandomPokemon** que retorne 
 // un pokemon aleatorio.
 const getRandomPokemon = async () => {
@@ -24,8 +13,56 @@ const getRandomPokemon = async () => {
     } catch (error) {
         console.error('Error obteniendo pokemon random');
     }
+};
+
+//.*********************************************
+
+//2 Declara una funcion **getImageAndName** que retorne el 
+// nombre y la URL de la imagen de un pokemon => 
+// (return {img, name})
+
+
+async function getImageAndName (pokemon){
+
+    let response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon}`)
+    let data = await response.json();
+    let name = data.name;
+    let img = data.sprites.front_default;
+    return {name, img}
+    
+}
+//.**************************************
+
+//  3.- Declara una funcion **printImageAndName** que retorne 
+// el string necesario para pintar la imagen y el nombre 
+// del pokemon en el DOM de la siguiente forma:
+
+// ```html
+// <section>
+//     <img src="url de imagen" alt="nombre del pokemon">
+//     <h1>Nombre del pokemon</h1>
+// </section>
+// ``` 
+
+function printImageAndName({ img, name }) {
+  return `
+<section>
+    <img src="${img}" alt="${name}">
+    <h1>${name}</h1>
+</section>
+  `.trim();
 }
 
+async function showRandomPokemon() {
+  const { name, img } = await getImageAndName(Math.floor(Math.random() * 898) + 1);
+  const html = printImageAndName({ img, name });
+  document.getElementById('pokemon-container').innerHTML = html;
+}
+
+// Llama a la función cuando la página cargue
+//window.onload = showRandomPokemon;
+
+//..***************************************************
 
 //4 Declara una función **getRandomDogImage** que 
 // retorne la url de la imagen de un perro aleatorio
@@ -44,6 +81,8 @@ const getRandomDogImage = async () => {
 // getRandomDogImage()
 //   .then((data) => console.log(data))
 //   .catch((error) => console.log("hubo un error" + error));
+
+//-*******************************************
 
 //5 5.- Declara una función **getRandomPokemonImage** 
 // que retorne la url de la imagen de un pokemon aleatorio.
@@ -92,34 +131,7 @@ const getRandomCharacter = async () => {
 //   .then((data) => console.log(data))
 //   .catch((error) => console.log("hubo un error" + error));
 
-//  3.- Declara una funcion **printImageAndName** que retorne 
-// el string necesario para pintar la imagen y el nombre 
-// del pokemon en el DOM de la siguiente forma:
-
-// ```html
-// <section>
-//     <img src="url de imagen" alt="nombre del pokemon">
-//     <h1>Nombre del pokemon</h1>
-// </section>
-// ``` 
-
-function printImageAndName({ img, name }) {
-  return `
-<section>
-    <img src="${img}" alt="${name}">
-    <h1>${name}</h1>
-</section>
-  `.trim();
-}
-
-async function showRandomPokemon() {
-  const { name, img } = await getImageAndName(Math.floor(Math.random() * 898) + 1);
-  const html = printImageAndName({ img, name });
-  document.getElementById('pokemon-container').innerHTML = html;
-}
-
-// Llama a la función cuando la página cargue
-// window.onload = showRandomPokemon;
+//-*************************************************
 
 // Ejercicio 8.- Declara una función **getRandomCharacterInfo** 
 // que retorne de un personaje su imagen, nombre, episodios 
@@ -153,4 +165,5 @@ const getRandomCharacterInfo = async () => {
   }
 };
 
-getRandomCharacterInfo().then(info => console.log(info));
+getRandomCharacterInfo()
+    .then(info => console.log(info));
