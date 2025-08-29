@@ -44,20 +44,21 @@ async function getImageAndName (pokemon){
 // </section>
 // ``` 
 
-function printImageAndName({ img, name }) {
-  return `
-<section>
-    <img src="${img}" alt="${name}">
-    <h1>${name}</h1>
-</section>
-  `.trim();
+async function printImageAndName () {
+   try{
+    let data = await getRandomPokemon();
+    let section =`<section>
+                <img src="${data.sprites.front_default}" alt="${data.name}">
+                <h1>${data.name}</h1>
+                </section>`
+     document.body.innerHTML += section
+    return section;
+ } catch (error) {
+    console.log(`ERROR: ${error.stack}`);
+  }
 }
+printImageAndName().then(data => console.log(data));
 
-async function showRandomPokemon() {
-  const { name, img } = await getImageAndName(Math.floor(Math.random() * 898) + 1);
-  const html = printImageAndName({ img, name });
-  document.getElementById('pokemon-container').innerHTML = html;
-}
 
 // Llama a la función cuando la página cargue
 //window.onload = showRandomPokemon;
@@ -113,6 +114,25 @@ const showRandomPokemonImage = async () => {
 
 // showRandomPokemonImage()
 
+// Ejercicio 6.- Declara una función printPugVsPikachu que pinte la batalla entre "Pug" y "Pikachu" (no se testea)
+
+function printPugVsPikachu(pugImg, pikachuImg) {
+  return `
+<section style="display: flex; align-items: center; justify-content: center; gap: 2rem;">
+  <div style="text-align: center;">
+    <img src="${pugImg}" alt="Pug" style="width:150px;">
+    <h2>Pug</h2>
+  </div>
+  <h1>VS</h1>
+  <div style="text-align: center;">
+    <img src="${pikachuImg}" alt="Pikachu" style="width:150px;">
+    <h2>Pikachu</h2>
+  </div>
+</section>
+  `.trim();
+}
+
+
 // 7.- 7.- Declara una función **getRandomCharacter** 
 // que retorne un personaje aleatorio.
 
@@ -141,29 +161,31 @@ const getRandomCharacter = async () => {
 // Formato de retorno => 
 // (return {img, name, episodes, firstEpisode, dateEpisode})
 
-const getRandomCharacterInfo = async () => {
-  try {
-    //obtener personaje aleatorio rehusado de arriba
-    const randomId = Math.floor(Math.random() * 826) + 1;
-    const res = await fetch(`https://rickandmortyapi.com/api/character/${randomId}`);
-    const data = await res.json();
+async function getRandomCharacterInfo () {
+  try{
+    let data = await getRandomCharacter();
+    let res = await fetch(data.episode[0]);
+    let episodeData = await res.json();
+    let characterInfo = {
+      img: data.image,
+      name: data.name,
+      episodes: data.episode,
+      firstEpisode: episodeData.name,
+      dateEpisode: episodeData.air_date
+    }
+    
+    let section = `<section>
+                <img src="${characterInfo.img}" alt="${characterInfo.name}">
+                <h2>${characterInfo.name}</h2>
+                <h4>First Episode: ${characterInfo.firstEpisode}</h4>
+                <h4>Air Date: ${characterInfo.dateEpisode}</h4> 
+                <p>${characterInfo.episodes}</p>
+                </section>`
 
-    const img = data.image;
-    const name = data.name;
-    const episodes = data.episode.length;
-    const firstEpisodeUrl = data.episode[0];
-
-    //obtener info del primer capitulo
-    const epRes = await fetch(firstEpisodeUrl);
-    const epData = await epRes.json();
-    const firstEpisode = epData.name;
-    const dateEpisode = epData.air_date;
-
-    return { img, name, episodes, firstEpisode, dateEpisode };
-  } catch (error) {
-    console.error('Error obteniendo Rick:', error);
+    document.body.innerHTML += section
+    return characterInfo;
+  }catch (error) {
+    console.log(`ERROR: ${error.stack}`);
   }
-};
-
-getRandomCharacterInfo()
-    .then(info => console.log(info));
+}
+getRandomCharacterInfo().then(data=> console.log(data));
